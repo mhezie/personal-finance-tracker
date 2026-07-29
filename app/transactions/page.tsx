@@ -18,31 +18,46 @@ export default function TransactionsPage() {
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
+  const fetchTransactions = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+      router.push("/login");
+      return;
+    }
+
+    const { data, error } = await supabase
+      .from("transactions")
+      .select("*")
+      .order("date", { ascending: false });
+
+    if (error) {
+      console.error(error);
+    } else {
+      setTransactions(data || []);
+    }
+
+    setLoading(false);
+  };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
-    const fetchTransactions = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
+  fetchTransactions();
+}, []);
 
-      if (!user) {
-        router.push("/login");
-        return;
-      }
+  const handleDelete = async (id: number) => {
+    const { error } = await supabase
+      .from("transactions")
+      .delete()
+      .eq("id", id);
 
-      const { data, error } = await supabase
-        .from("transactions")
-        .select("*")
-        .order("date", { ascending: false });
-
-      if (error) {
-        console.error(error);
-      } else {
-        setTransactions(data || []);
-      }
-
-      setLoading(false);
-    };
-
-    fetchTransactions();
-  }, [router]);
+    if (error) {
+      alert("Error deleting transaction");
+      console.error(error);
+    } else {
+      // Refresh the list after deleting
+      fetchTransactions();
+    }
+  };
 
   if (loading) {
     return (
@@ -85,15 +100,24 @@ export default function TransactionsPage() {
                   </p>
                 </div>
 
-                <div
-                  className={`text-lg font-bold ${
-                    transaction.type === "income"
-                      ? "text-green-600"
-                      : "text-red-600"
-                  }`}
-                >
-                  {transaction.type === "income" ? "+" : "-"}£
-                  {Number(transaction.amount).toFixed(2)}
+                <div className="flex items-center gap-4">
+                  <div
+                    className={`text-lg font-bold ${
+                      transaction.type === "income"
+                        ? "text-green-600"
+                        : "text-red-600"
+                    }`}
+                  >
+                    {transaction.type === "income" ? "+" : "-"}£
+                    {Number(transaction.amount).toFixed(2)}
+                  </div>
+
+                  <button
+                    onClick={() => handleDelete(transaction.id)}
+                    className="bg-red-100 text-red-600 px-3 py-1 rounded-md text-sm hover:bg-red-200 transition"
+                  >
+                    Delete
+                  </button>
                 </div>
               </div>
             ))}
