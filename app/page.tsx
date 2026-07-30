@@ -5,9 +5,9 @@ import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 import { User } from "@supabase/supabase-js";
 import Navbar from "@/components/Navbar";
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
 
 interface Transaction {
-  id: number;
   amount: number;
   type: string;
 }
@@ -40,7 +40,7 @@ export default function HomePage() {
         let income = 0;
         let expenses = 0;
 
-        transactions.forEach((t) => {
+        transactions.forEach((t: Transaction) => {
           if (t.type === "income") {
             income += Number(t.amount);
           } else {
@@ -60,6 +60,11 @@ export default function HomePage() {
 
   const balance = totalIncome - totalExpenses;
 
+  const chartData = [
+    { name: "Income", amount: totalIncome },
+    { name: "Expenses", amount: totalExpenses },
+  ];
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-200">
@@ -72,15 +77,11 @@ export default function HomePage() {
     <div className="min-h-screen bg-slate-200">
       <Navbar />
 
-      <div className="max-w-2xl mx-auto py-10 px-4">
-        {/* Header */}
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-        </div>
+      <div className="max-w-4xl mx-auto py-10 px-4">
+        <h1 className="text-3xl font-bold text-gray-900 mb-8">Dashboard</h1>
 
         {/* Summary Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-          {/* Balance */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
           <div className="bg-white p-6 rounded-xl shadow-md text-center">
             <p className="text-sm text-gray-500 mb-1">Current Balance</p>
             <p className={`text-2xl font-bold ${balance >= 0 ? "text-green-600" : "text-red-600"}`}>
@@ -88,7 +89,6 @@ export default function HomePage() {
             </p>
           </div>
 
-          {/* Income */}
           <div className="bg-white p-6 rounded-xl shadow-md text-center">
             <p className="text-sm text-gray-500 mb-1">Total Income</p>
             <p className="text-2xl font-bold text-green-600">
@@ -96,12 +96,27 @@ export default function HomePage() {
             </p>
           </div>
 
-          {/* Expenses */}
           <div className="bg-white p-6 rounded-xl shadow-md text-center">
             <p className="text-sm text-gray-500 mb-1">Total Expenses</p>
             <p className="text-2xl font-bold text-red-600">
               £{totalExpenses.toFixed(2)}
             </p>
+          </div>
+        </div>
+
+        {/* Chart */}
+        <div className="bg-white p-6 rounded-xl shadow-md mb-10">
+          <h2 className="text-xl font-semibold text-gray-800 mb-4">Income vs Expenses</h2>
+          <div className="h-64">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={chartData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip />
+                <Bar dataKey="amount" fill="#3b82f6" radius={[4, 4, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
           </div>
         </div>
 
