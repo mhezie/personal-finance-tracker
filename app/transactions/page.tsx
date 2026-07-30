@@ -17,6 +17,8 @@ interface Transaction {
 
 export default function TransactionsPage() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [filteredTransactions, setFilteredTransactions] = useState<Transaction[]>([]);
+  const [filter, setFilter] = useState<"all" | "income" | "expense">("all");
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
@@ -37,6 +39,7 @@ export default function TransactionsPage() {
       console.error(error);
     } else {
       setTransactions(data || []);
+      setFilteredTransactions(data || []);
     }
 
     setLoading(false);
@@ -46,6 +49,17 @@ export default function TransactionsPage() {
     fetchTransactions();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Apply filter whenever the filter or transactions change
+  useEffect(() => {
+    if (filter === "all") {
+      setFilteredTransactions(transactions);
+    } else {
+      setFilteredTransactions(
+        transactions.filter((t) => t.type === filter)
+      );
+    }
+  }, [filter, transactions]);
 
   const handleDelete = async (id: number) => {
     const { error } = await supabase
@@ -84,13 +98,47 @@ export default function TransactionsPage() {
           </Link>
         </div>
 
-        {transactions.length === 0 ? (
+        {/* Filter Buttons */}
+        <div className="flex gap-3 mb-6">
+          <button
+            onClick={() => setFilter("all")}
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
+              filter === "all"
+                ? "bg-blue-600 text-white"
+                : "bg-white text-gray-700 hover:bg-gray-100"
+            }`}
+          >
+            All
+          </button>
+          <button
+            onClick={() => setFilter("income")}
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
+              filter === "income"
+                ? "bg-green-600 text-white"
+                : "bg-white text-gray-700 hover:bg-gray-100"
+            }`}
+          >
+            Income
+          </button>
+          <button
+            onClick={() => setFilter("expense")}
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
+              filter === "expense"
+                ? "bg-red-600 text-white"
+                : "bg-white text-gray-700 hover:bg-gray-100"
+            }`}
+          >
+            Expense
+          </button>
+        </div>
+
+        {filteredTransactions.length === 0 ? (
           <div className="bg-white p-8 rounded-xl shadow text-center">
-            <p className="text-gray-600">No transactions yet.</p>
+            <p className="text-gray-600">No transactions found.</p>
           </div>
         ) : (
           <div className="space-y-4">
-            {transactions.map((transaction) => (
+            {filteredTransactions.map((transaction) => (
               <div
                 key={transaction.id}
                 className="bg-white p-5 rounded-xl shadow flex justify-between items-center"
