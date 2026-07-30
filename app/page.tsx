@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 import { User } from "@supabase/supabase-js";
+import Navbar from "@/components/Navbar";
 
 interface Transaction {
   id: number;
@@ -29,7 +30,6 @@ export default function HomePage() {
 
       setUser(user);
 
-      // Fetch all transactions of the current user
       const { data: transactions, error } = await supabase
         .from("transactions")
         .select("amount, type");
@@ -58,11 +58,6 @@ export default function HomePage() {
     loadData();
   }, [router]);
 
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    router.push("/login");
-  };
-
   const balance = totalIncome - totalExpenses;
 
   if (loading) {
@@ -74,17 +69,13 @@ export default function HomePage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-200 py-10 px-4">
-      <div className="max-w-2xl mx-auto">
+    <div className="min-h-screen bg-slate-200">
+      <Navbar />
+
+      <div className="max-w-2xl mx-auto py-10 px-4">
         {/* Header */}
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-          <button
-            onClick={handleLogout}
-            className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition"
-          >
-            Logout
-          </button>
         </div>
 
         {/* Summary Cards */}

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
+import Navbar from "@/components/Navbar";
 
 export default function AddTransactionPage() {
   const [title, setTitle] = useState("");
@@ -52,87 +53,91 @@ export default function AddTransactionPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-200 flex items-center justify-center p-4">
-      <div className="bg-white p-8 rounded-xl shadow-lg w-full max-w-md">
-        <h1 className="text-2xl font-bold mb-6 text-center text-gray-900">
-          Add Transaction
-        </h1>
+    <div className="min-h-screen bg-slate-200">
+      <Navbar />
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-semibold mb-1 text-gray-800">Title</label>
-            <input
-              type="text"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
-              placeholder="e.g. Salary, Groceries"
-              required
-            />
-          </div>
+      <div className="flex items-center justify-center p-4 py-10">
+        <div className="bg-white p-8 rounded-xl shadow-lg w-full max-w-md">
+          <h1 className="text-2xl font-bold mb-6 text-center text-gray-900">
+            Add Transaction
+          </h1>
 
-          <div>
-            <label className="block text-sm font-semibold mb-1 text-gray-800">Amount</label>
-            <input
-              type="number"
-              step="0.01"
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
-              placeholder="0.00"
-              required
-            />
-          </div>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label className="block text-sm font-semibold mb-1 text-gray-800">Title</label>
+              <input
+                type="text"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
+                placeholder="e.g. Salary, Groceries"
+                required
+              />
+            </div>
 
-          <div>
-            <label className="block text-sm font-semibold mb-1 text-gray-800">Type</label>
-            <select
-              value={type}
-              onChange={(e) => setType(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
+            <div>
+              <label className="block text-sm font-semibold mb-1 text-gray-800">Amount</label>
+              <input
+                type="number"
+                step="0.01"
+                value={amount}
+                onChange={(e) => setAmount(e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
+                placeholder="0.00"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold mb-1 text-gray-800">Type</label>
+              <select
+                value={type}
+                onChange={(e) => setType(e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
+              >
+                <option value="expense">Expense</option>
+                <option value="income">Income</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold mb-1 text-gray-800">Category</label>
+              <input
+                type="text"
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
+                placeholder="e.g. Food, Transport, Salary"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold mb-1 text-gray-800">Date</label>
+              <input
+                type="date"
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
+                required
+              />
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-blue-600 text-white py-2.5 rounded-lg hover:bg-blue-700 transition font-medium disabled:bg-blue-400"
             >
-              <option value="expense">Expense</option>
-              <option value="income">Income</option>
-            </select>
-          </div>
+              {loading ? "Adding..." : "Add Transaction"}
+            </button>
+          </form>
 
-          <div>
-            <label className="block text-sm font-semibold mb-1 text-gray-800">Category</label>
-            <input
-              type="text"
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
-              placeholder="e.g. Food, Transport, Salary"
-              required
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-semibold mb-1 text-gray-800">Date</label>
-            <input
-              type="date"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
-              required
-            />
-          </div>
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-blue-600 text-white py-2.5 rounded-lg hover:bg-blue-700 transition font-medium disabled:bg-blue-400"
-          >
-            {loading ? "Adding..." : "Add Transaction"}
-          </button>
-        </form>
-
-        {message && (
-          <p className={`mt-4 text-center text-sm font-medium ${message.includes("success") ? "text-green-600" : "text-red-600"}`}>
-            {message}
-          </p>
-        )}
+          {message && (
+            <p className={`mt-4 text-center text-sm font-medium ${message.includes("success") ? "text-green-600" : "text-red-600"}`}>
+              {message}
+            </p>
+          )}
+        </div>
       </div>
     </div>
   );

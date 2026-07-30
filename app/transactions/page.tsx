@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
+import Navbar from "@/components/Navbar";
 
 interface Transaction {
   id: number;
@@ -39,10 +40,11 @@ export default function TransactionsPage() {
 
     setLoading(false);
   };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+
   useEffect(() => {
-  fetchTransactions();
-}, []);
+    fetchTransactions();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleDelete = async (id: number) => {
     const { error } = await supabase
@@ -54,7 +56,6 @@ export default function TransactionsPage() {
       alert("Error deleting transaction");
       console.error(error);
     } else {
-      // Refresh the list after deleting
       fetchTransactions();
     }
   };
@@ -68,8 +69,10 @@ export default function TransactionsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-200 py-10 px-4">
-      <div className="max-w-3xl mx-auto">
+    <div className="min-h-screen bg-slate-200">
+      <Navbar />
+
+      <div className="max-w-3xl mx-auto py-10 px-4">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold text-gray-900">My Transactions</h1>
           <a
