@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 import Navbar from "@/components/Navbar";
+import Link from "next/link";
 
 interface Transaction {
   id: number;
@@ -75,12 +76,12 @@ export default function TransactionsPage() {
       <div className="max-w-3xl mx-auto py-10 px-4">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold text-gray-900">My Transactions</h1>
-          <a
+          <Link
             href="/add-transaction"
             className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
           >
             + Add New
-          </a>
+          </Link>
         </div>
 
         {transactions.length === 0 ? (
@@ -103,7 +104,7 @@ export default function TransactionsPage() {
                   </p>
                 </div>
 
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-3">
                   <div
                     className={`text-lg font-bold ${
                       transaction.type === "income"
@@ -114,6 +115,13 @@ export default function TransactionsPage() {
                     {transaction.type === "income" ? "+" : "-"}£
                     {Number(transaction.amount).toFixed(2)}
                   </div>
+
+                  <Link
+                    href={`/edit-transaction/${transaction.id}`}
+                    className="bg-blue-100 text-blue-600 px-3 py-1 rounded-md text-sm hover:bg-blue-200 transition"
+                  >
+                    Edit
+                  </Link>
 
                   <button
                     onClick={() => handleDelete(transaction.id)}
