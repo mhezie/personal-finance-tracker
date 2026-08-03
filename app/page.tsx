@@ -5,7 +5,7 @@ import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 import { User } from "@supabase/supabase-js";
 import Navbar from "@/components/Navbar";
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Cell } from "recharts";
 
 interface Transaction {
   amount: number;
@@ -65,6 +65,8 @@ export default function HomePage() {
     { name: "Expenses", amount: totalExpenses },
   ];
 
+  const colors = ["#16a34a", "#dc2626"]; // green for income, red for expenses
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-200">
@@ -114,7 +116,11 @@ export default function HomePage() {
                 <XAxis dataKey="name" />
                 <YAxis />
                 <Tooltip />
-                <Bar dataKey="amount" fill="#3b82f6" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="amount" radius={[4, 4, 0, 0]}>
+                  {chartData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={colors[index]} />
+                  ))}
+                </Bar>
               </BarChart>
             </ResponsiveContainer>
           </div>

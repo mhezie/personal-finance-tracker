@@ -62,10 +62,7 @@ export default function TransactionsPage() {
 
   const handleDelete = async (id: number) => {
     const confirmed = window.confirm("Are you sure you want to delete this transaction?");
-
-    if (!confirmed) {
-      return; // User cancelled
-    }
+    if (!confirmed) return;
 
     const { error } = await supabase
       .from("transactions")
@@ -79,6 +76,11 @@ export default function TransactionsPage() {
       fetchTransactions();
     }
   };
+
+  // Calculate total of filtered transactions
+  const filteredTotal = filteredTransactions.reduce((sum, t) => {
+    return t.type === "income" ? sum + Number(t.amount) : sum - Number(t.amount);
+  }, 0);
 
   if (loading) {
     return (
@@ -104,7 +106,7 @@ export default function TransactionsPage() {
         </div>
 
         {/* Filter Buttons */}
-        <div className="flex gap-3 mb-6">
+        <div className="flex gap-3 mb-4">
           <button
             onClick={() => setFilter("all")}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
@@ -135,6 +137,16 @@ export default function TransactionsPage() {
           >
             Expense
           </button>
+        </div>
+
+        {/* Filtered Total */}
+        <div className="bg-white p-4 rounded-xl shadow mb-6 flex justify-between items-center">
+          <span className="text-gray-600 font-medium">
+            {filter === "all" ? "Net Total" : filter === "income" ? "Total Income" : "Total Expenses"}
+          </span>
+          <span className={`text-xl font-bold ${filteredTotal >= 0 ? "text-green-600" : "text-red-600"}`}>
+            {filteredTotal >= 0 ? "+" : ""}£{Math.abs(filteredTotal).toFixed(2)}
+          </span>
         </div>
 
         {filteredTransactions.length === 0 ? (

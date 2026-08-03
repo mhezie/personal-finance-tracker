@@ -1,16 +1,22 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 
 export default function Navbar() {
   const router = useRouter();
+  const pathname = usePathname();
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
     router.push("/login");
   };
+
+  const linkClass = (path: string) =>
+    pathname === path
+      ? "text-blue-600 font-semibold"
+      : "text-gray-700 hover:text-blue-600 font-medium";
 
   return (
     <nav className="bg-white shadow-md">
@@ -23,22 +29,13 @@ export default function Navbar() {
 
           {/* Navigation Links */}
           <div className="flex items-center gap-6">
-            <Link
-              href="/"
-              className="text-gray-700 hover:text-blue-600 font-medium"
-            >
+            <Link href="/" className={linkClass("/")}>
               Dashboard
             </Link>
-            <Link
-              href="/transactions"
-              className="text-gray-700 hover:text-blue-600 font-medium"
-            >
+            <Link href="/transactions" className={linkClass("/transactions")}>
               Transactions
             </Link>
-            <Link
-              href="/add-transaction"
-              className="text-gray-700 hover:text-blue-600 font-medium"
-            >
+            <Link href="/add-transaction" className={linkClass("/add-transaction")}>
               Add Transaction
             </Link>
 
