@@ -50,7 +50,6 @@ export default function TransactionsPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Apply filter whenever the filter or transactions change
   useEffect(() => {
     if (filter === "all") {
       setFilteredTransactions(transactions);
@@ -62,6 +61,12 @@ export default function TransactionsPage() {
   }, [filter, transactions]);
 
   const handleDelete = async (id: number) => {
+    const confirmed = window.confirm("Are you sure you want to delete this transaction?");
+
+    if (!confirmed) {
+      return; // User cancelled
+    }
+
     const { error } = await supabase
       .from("transactions")
       .delete()

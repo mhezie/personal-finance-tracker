@@ -13,11 +13,22 @@ export default function EditTransactionPage() {
   const [title, setTitle] = useState("");
   const [amount, setAmount] = useState("");
   const [type, setType] = useState("expense");
-  const [category, setCategory] = useState("");
+  const [category, setCategory] = useState("Food");
   const [date, setDate] = useState("");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
+
+  const categories = [
+    "Food",
+    "Transport",
+    "Housing",
+    "Salary",
+    "Entertainment",
+    "Utilities",
+    "Shopping",
+    "Other",
+  ];
 
   useEffect(() => {
     const fetchTransaction = async () => {
@@ -36,7 +47,7 @@ export default function EditTransactionPage() {
       setTitle(data.title);
       setAmount(data.amount.toString());
       setType(data.type);
-      setCategory(data.category);
+      setCategory(data.category || "Food");
       setDate(data.date);
       setLoading(false);
     };
@@ -130,13 +141,17 @@ export default function EditTransactionPage() {
 
             <div>
               <label className="block text-sm font-semibold mb-1 text-gray-800">Category</label>
-              <input
-                type="text"
+              <select
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
-                required
-              />
+              >
+                {categories.map((cat) => (
+                  <option key={cat} value={cat}>
+                    {cat}
+                  </option>
+                ))}
+              </select>
             </div>
 
             <div>
