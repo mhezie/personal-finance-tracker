@@ -77,7 +77,6 @@ export default function TransactionsPage() {
     }
   };
 
-  // Calculate total of filtered transactions
   const filteredTotal = filteredTransactions.reduce((sum, t) => {
     return t.type === "income" ? sum + Number(t.amount) : sum - Number(t.amount);
   }, 0);
@@ -85,7 +84,10 @@ export default function TransactionsPage() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-200">
-        <p className="text-lg text-gray-700">Loading transactions...</p>
+        <div className="text-center">
+          <div className="w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
+          <p className="text-gray-700">Loading transactions...</p>
+        </div>
       </div>
     );
   }
@@ -94,19 +96,19 @@ export default function TransactionsPage() {
     <div className="min-h-screen bg-slate-200">
       <Navbar />
 
-      <div className="max-w-3xl mx-auto py-10 px-4">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold text-gray-900">My Transactions</h1>
+      <div className="max-w-3xl mx-auto py-8 px-4">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">My Transactions</h1>
           <Link
             href="/add-transaction"
-            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
+            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition text-center"
           >
             + Add New
           </Link>
         </div>
 
         {/* Filter Buttons */}
-        <div className="flex gap-3 mb-4">
+        <div className="flex flex-wrap gap-2 mb-4">
           <button
             onClick={() => setFilter("all")}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
@@ -139,26 +141,43 @@ export default function TransactionsPage() {
           </button>
         </div>
 
-        {/* Filtered Total */}
-        <div className="bg-white p-4 rounded-xl shadow mb-6 flex justify-between items-center">
-          <span className="text-gray-600 font-medium">
-            {filter === "all" ? "Net Total" : filter === "income" ? "Total Income" : "Total Expenses"}
-          </span>
+        {/* Filtered Total + Count */}
+        <div className="bg-white p-4 rounded-xl shadow mb-6 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
+          <div>
+            <p className="text-gray-600 font-medium">
+              {filter === "all" ? "Net Total" : filter === "income" ? "Total Income" : "Total Expenses"}
+            </p>
+            <p className="text-sm text-gray-500 mt-1">
+              Showing {filteredTransactions.length} transaction{filteredTransactions.length !== 1 ? "s" : ""}
+            </p>
+          </div>
           <span className={`text-xl font-bold ${filteredTotal >= 0 ? "text-green-600" : "text-red-600"}`}>
             {filteredTotal >= 0 ? "+" : ""}£{Math.abs(filteredTotal).toFixed(2)}
           </span>
         </div>
 
         {filteredTransactions.length === 0 ? (
-          <div className="bg-white p-8 rounded-xl shadow text-center">
-            <p className="text-gray-600">No transactions found.</p>
+          <div className="bg-white p-8 sm:p-10 rounded-xl shadow text-center">
+            <p className="text-4xl mb-3">📭</p>
+            <h3 className="text-lg font-semibold text-gray-800 mb-1">No transactions found</h3>
+            <p className="text-gray-500 mb-4">
+              {filter === "all"
+                ? "You haven’t added any transactions yet."
+                : `No ${filter} transactions to show.`}
+            </p>
+            <Link
+              href="/add-transaction"
+              className="inline-block bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition"
+            >
+              Add your first transaction
+            </Link>
           </div>
         ) : (
-          <div className="space-y-4">
+          <div className="space-y-3">
             {filteredTransactions.map((transaction) => (
               <div
                 key={transaction.id}
-                className="bg-white p-5 rounded-xl shadow flex justify-between items-center"
+                className="bg-white p-4 sm:p-5 rounded-xl shadow flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3"
               >
                 <div>
                   <h3 className="font-semibold text-lg text-gray-900">
