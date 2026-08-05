@@ -52,23 +52,19 @@ export default function TransactionsPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Apply filter, search, and sorting
   useEffect(() => {
     let result = [...transactions];
 
-    // Type filter
     if (filter !== "all") {
       result = result.filter((t) => t.type === filter);
     }
 
-    // Search filter
     if (search.trim() !== "") {
       result = result.filter((t) =>
         t.title.toLowerCase().includes(search.toLowerCase())
       );
     }
 
-    // Sorting
     result.sort((a, b) => {
       if (sortOrder === "newest") {
         return new Date(b.date).getTime() - new Date(a.date).getTime();
@@ -107,24 +103,46 @@ export default function TransactionsPage() {
     return t.type === "income" ? sum + Number(t.amount) : sum - Number(t.amount);
   }, 0);
 
+  const getCategoryColor = (category: string) => {
+    const colors: Record<string, string> = {
+      Food: "bg-orange-100 text-orange-700 dark:bg-orange-900 dark:text-orange-200",
+      Transport: "bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-200",
+      Housing: "bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-200",
+      Salary: "bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-200",
+      Entertainment: "bg-pink-100 text-pink-700 dark:bg-pink-900 dark:text-pink-200",
+      Utilities: "bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-200",
+      Shopping: "bg-indigo-100 text-indigo-700 dark:bg-indigo-900 dark:text-indigo-200",
+      Other: "bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-200",
+    };
+    return colors[category] || "bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-200";
+  };
+
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-200">
+      <div className="min-h-screen flex items-center justify-center bg-slate-200 dark:bg-gray-900">
         <div className="text-center">
           <div className="w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
-          <p className="text-gray-700">Loading transactions...</p>
+          <p className="text-gray-700 dark:text-gray-300">Loading transactions...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-200">
+    <div className="min-h-screen bg-slate-200 dark:bg-gray-900">
       <Navbar />
 
       <div className="max-w-3xl mx-auto py-8 px-4">
+        {/* Header */}
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">My Transactions</h1>
+          <div className="flex items-center gap-3">
+            <Link href="/" className="text-sm text-blue-600 hover:underline dark:text-blue-400">
+              ← Dashboard
+            </Link>
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
+              My Transactions
+            </h1>
+          </div>
           <Link
             href="/add-transaction"
             className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition text-center"
@@ -133,25 +151,25 @@ export default function TransactionsPage() {
           </Link>
         </div>
 
-        {/* Search Bar */}
+        {/* Search */}
         <div className="mb-4">
           <input
             type="text"
             placeholder="Search by title..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 dark:bg-gray-800 dark:border-gray-600 dark:text-white"
           />
         </div>
 
-        {/* Filter + Sort + Clear Buttons */}
+        {/* Filters */}
         <div className="flex flex-wrap gap-2 mb-4 items-center">
           <button
             onClick={() => setFilter("all")}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
               filter === "all"
                 ? "bg-blue-600 text-white"
-                : "bg-white text-gray-700 hover:bg-gray-100"
+                : "bg-white text-gray-700 hover:bg-gray-100 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
             }`}
           >
             All
@@ -161,7 +179,7 @@ export default function TransactionsPage() {
             className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
               filter === "income"
                 ? "bg-green-600 text-white"
-                : "bg-white text-gray-700 hover:bg-gray-100"
+                : "bg-white text-gray-700 hover:bg-gray-100 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
             }`}
           >
             Income
@@ -171,20 +189,20 @@ export default function TransactionsPage() {
             className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
               filter === "expense"
                 ? "bg-red-600 text-white"
-                : "bg-white text-gray-700 hover:bg-gray-100"
+                : "bg-white text-gray-700 hover:bg-gray-100 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
             }`}
           >
             Expense
           </button>
 
-          <div className="w-px bg-gray-300 mx-1 hidden sm:block"></div>
+          <div className="w-px bg-gray-300 mx-1 hidden sm:block dark:bg-gray-600"></div>
 
           <button
             onClick={() => setSortOrder("newest")}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
               sortOrder === "newest"
                 ? "bg-gray-800 text-white"
-                : "bg-white text-gray-700 hover:bg-gray-100"
+                : "bg-white text-gray-700 hover:bg-gray-100 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
             }`}
           >
             Newest
@@ -194,7 +212,7 @@ export default function TransactionsPage() {
             className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
               sortOrder === "oldest"
                 ? "bg-gray-800 text-white"
-                : "bg-white text-gray-700 hover:bg-gray-100"
+                : "bg-white text-gray-700 hover:bg-gray-100 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
             }`}
           >
             Oldest
@@ -203,20 +221,20 @@ export default function TransactionsPage() {
           {(filter !== "all" || search !== "" || sortOrder !== "newest") && (
             <button
               onClick={clearFilters}
-              className="px-4 py-2 rounded-lg text-sm font-medium bg-red-100 text-red-600 hover:bg-red-200 transition"
+              className="px-4 py-2 rounded-lg text-sm font-medium bg-red-100 text-red-600 hover:bg-red-200 transition dark:bg-red-900 dark:text-red-200"
             >
               Clear Filters
             </button>
           )}
         </div>
 
-        {/* Filtered Total + Count */}
-        <div className="bg-white p-4 rounded-xl shadow mb-6 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
+        {/* Total Card */}
+        <div className="bg-white p-4 rounded-xl shadow mb-6 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 dark:bg-gray-800">
           <div>
-            <p className="text-gray-600 font-medium">
+            <p className="text-gray-600 font-medium dark:text-gray-300">
               {filter === "all" ? "Net Total" : filter === "income" ? "Total Income" : "Total Expenses"}
             </p>
-            <p className="text-sm text-gray-500 mt-1">
+            <p className="text-sm text-gray-500 mt-1 dark:text-gray-400">
               Showing {filteredTransactions.length} transaction{filteredTransactions.length !== 1 ? "s" : ""}
             </p>
           </div>
@@ -226,10 +244,10 @@ export default function TransactionsPage() {
         </div>
 
         {filteredTransactions.length === 0 ? (
-          <div className="bg-white p-8 sm:p-10 rounded-xl shadow text-center">
+          <div className="bg-white p-8 sm:p-10 rounded-xl shadow text-center dark:bg-gray-800">
             <p className="text-4xl mb-3">📭</p>
-            <h3 className="text-lg font-semibold text-gray-800 mb-1">No transactions found</h3>
-            <p className="text-gray-500 mb-4">
+            <h3 className="text-lg font-semibold text-gray-800 mb-1 dark:text-white">No transactions found</h3>
+            <p className="text-gray-500 mb-4 dark:text-gray-400">
               {search
                 ? "No transactions match your search."
                 : filter === "all"
@@ -248,23 +266,24 @@ export default function TransactionsPage() {
             {filteredTransactions.map((transaction) => (
               <div
                 key={transaction.id}
-                className="bg-white p-4 sm:p-5 rounded-xl shadow flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3"
+                className="bg-white p-4 sm:p-5 rounded-xl shadow flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 dark:bg-gray-800"
               >
                 <div>
-                  <h3 className="font-semibold text-lg text-gray-900">
+                  <h3 className="font-semibold text-lg text-gray-900 dark:text-white">
                     {transaction.title}
                   </h3>
-                  <p className="text-sm text-gray-600">
-                    {transaction.category} • {transaction.date}
-                  </p>
+                  <div className="flex items-center gap-2 mt-1">
+                    <span className={`text-xs px-2 py-1 rounded-full font-medium ${getCategoryColor(transaction.category)}`}>
+                      {transaction.category}
+                    </span>
+                    <span className="text-sm text-gray-500 dark:text-gray-400">• {transaction.date}</span>
+                  </div>
                 </div>
 
                 <div className="flex items-center gap-3">
                   <div
                     className={`text-lg font-bold ${
-                      transaction.type === "income"
-                        ? "text-green-600"
-                        : "text-red-600"
+                      transaction.type === "income" ? "text-green-600" : "text-red-600"
                     }`}
                   >
                     {transaction.type === "income" ? "+" : "-"}£
@@ -273,14 +292,14 @@ export default function TransactionsPage() {
 
                   <Link
                     href={`/edit-transaction/${transaction.id}`}
-                    className="bg-blue-100 text-blue-600 px-3 py-1 rounded-md text-sm hover:bg-blue-200 transition"
+                    className="bg-blue-100 text-blue-600 px-3 py-1 rounded-md text-sm hover:bg-blue-200 transition dark:bg-blue-900 dark:text-blue-200"
                   >
                     Edit
                   </Link>
 
                   <button
                     onClick={() => handleDelete(transaction.id)}
-                    className="bg-red-100 text-red-600 px-3 py-1 rounded-md text-sm hover:bg-red-200 transition"
+                    className="bg-red-100 text-red-600 px-3 py-1 rounded-md text-sm hover:bg-red-200 transition dark:bg-red-900 dark:text-red-200"
                   >
                     Delete
                   </button>

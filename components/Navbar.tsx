@@ -3,10 +3,32 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
+import { useEffect, useState } from "react";
 
 export default function Navbar() {
   const router = useRouter();
   const pathname = usePathname();
+  const [isDark, setIsDark] = useState(false);
+
+  // On first load, check what is currently set
+  useEffect(() => {
+    const currentlyDark = document.documentElement.classList.contains("dark");
+    setIsDark(currentlyDark);
+  }, []);
+
+  const toggleDarkMode = () => {
+    if (document.documentElement.classList.contains("dark")) {
+      // Currently dark → switch to light
+      document.documentElement.classList.remove("dark");
+      localStorage.setItem("darkMode", "false");
+      setIsDark(false);
+    } else {
+      // Currently light → switch to dark
+      document.documentElement.classList.add("dark");
+      localStorage.setItem("darkMode", "true");
+      setIsDark(true);
+    }
+  };
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -15,19 +37,17 @@ export default function Navbar() {
 
   const linkClass = (path: string) =>
     pathname === path
-      ? "text-blue-600 font-semibold"
-      : "text-gray-700 hover:text-blue-600 font-medium";
+      ? "text-blue-600 font-semibold dark:text-blue-400"
+      : "text-gray-700 hover:text-blue-600 font-medium dark:text-gray-300 dark:hover:text-blue-400";
 
   return (
-    <nav className="bg-white shadow-md">
+    <nav className="bg-white shadow-md dark:bg-gray-900">
       <div className="max-w-6xl mx-auto px-4">
         <div className="flex justify-between items-center h-16">
-          {/* Logo / Brand */}
-          <Link href="/" className="text-xl font-bold text-gray-900">
+          <Link href="/" className="text-xl font-bold text-gray-900 dark:text-white">
             Finance Tracker
           </Link>
 
-          {/* Navigation Links */}
           <div className="flex items-center gap-6">
             <Link href="/" className={linkClass("/")}>
               Dashboard
@@ -38,6 +58,13 @@ export default function Navbar() {
             <Link href="/add-transaction" className={linkClass("/add-transaction")}>
               Add Transaction
             </Link>
+
+            <button
+              onClick={toggleDarkMode}
+              className="text-sm px-3 py-1.5 rounded-lg bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-white transition"
+            >
+              {isDark ? "☀️ Light" : "🌙 Dark"}
+            </button>
 
             <button
               onClick={handleLogout}
