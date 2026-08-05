@@ -18,6 +18,7 @@ export default function EditTransactionPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
+  const [messageType, setMessageType] = useState<"success" | "error" | "">("");
 
   const categories = [
     "Food",
@@ -40,6 +41,7 @@ export default function EditTransactionPage() {
 
       if (error || !data) {
         setMessage("Transaction not found");
+        setMessageType("error");
         setLoading(false);
         return;
       }
@@ -61,6 +63,7 @@ export default function EditTransactionPage() {
     e.preventDefault();
     setSaving(true);
     setMessage("");
+    setMessageType("");
 
     const { error } = await supabase
       .from("transactions")
@@ -75,11 +78,14 @@ export default function EditTransactionPage() {
 
     if (error) {
       setMessage(error.message);
+      setMessageType("error");
     } else {
       setMessage("Transaction updated successfully!");
+      setMessageType("success");
+
       setTimeout(() => {
         router.push("/transactions");
-      }, 1000);
+      }, 1200);
     }
 
     setSaving(false);
@@ -102,6 +108,18 @@ export default function EditTransactionPage() {
           <h1 className="text-2xl font-bold mb-6 text-center text-gray-900">
             Edit Transaction
           </h1>
+
+          {message && (
+            <div
+              className={`mb-4 p-3 rounded-lg text-center text-sm font-medium ${
+                messageType === "success"
+                  ? "bg-green-100 text-green-700"
+                  : "bg-red-100 text-red-700"
+              }`}
+            >
+              {message}
+            </div>
+          )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
@@ -173,12 +191,6 @@ export default function EditTransactionPage() {
               {saving ? "Saving..." : "Update Transaction"}
             </button>
           </form>
-
-          {message && (
-            <p className={`mt-4 text-center text-sm font-medium ${message.includes("success") ? "text-green-600" : "text-red-600"}`}>
-              {message}
-            </p>
-          )}
         </div>
       </div>
     </div>

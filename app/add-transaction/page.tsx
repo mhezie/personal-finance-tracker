@@ -13,6 +13,7 @@ export default function AddTransactionPage() {
   const [date, setDate] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
+  const [messageType, setMessageType] = useState<"success" | "error" | "">("");
   const router = useRouter();
 
   const categories = [
@@ -30,11 +31,13 @@ export default function AddTransactionPage() {
     e.preventDefault();
     setLoading(true);
     setMessage("");
+    setMessageType("");
 
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {
       setMessage("You must be logged in");
+      setMessageType("error");
       setLoading(false);
       return;
     }
@@ -52,12 +55,20 @@ export default function AddTransactionPage() {
 
     if (error) {
       setMessage(error.message);
+      setMessageType("error");
     } else {
       setMessage("Transaction added successfully!");
+      setMessageType("success");
       setTitle("");
       setAmount("");
       setCategory("Food");
       setDate("");
+
+      // Clear success message after 3 seconds
+      setTimeout(() => {
+        setMessage("");
+        setMessageType("");
+      }, 3000);
     }
 
     setLoading(false);
@@ -72,6 +83,18 @@ export default function AddTransactionPage() {
           <h1 className="text-2xl font-bold mb-6 text-center text-gray-900">
             Add Transaction
           </h1>
+
+          {message && (
+            <div
+              className={`mb-4 p-3 rounded-lg text-center text-sm font-medium ${
+                messageType === "success"
+                  ? "bg-green-100 text-green-700"
+                  : "bg-red-100 text-red-700"
+              }`}
+            >
+              {message}
+            </div>
+          )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
@@ -145,12 +168,6 @@ export default function AddTransactionPage() {
               {loading ? "Adding..." : "Add Transaction"}
             </button>
           </form>
-
-          {message && (
-            <p className={`mt-4 text-center text-sm font-medium ${message.includes("success") ? "text-green-600" : "text-red-600"}`}>
-              {message}
-            </p>
-          )}
         </div>
       </div>
     </div>

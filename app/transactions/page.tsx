@@ -19,6 +19,8 @@ export default function TransactionsPage() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [filteredTransactions, setFilteredTransactions] = useState<Transaction[]>([]);
   const [filter, setFilter] = useState<"all" | "income" | "expense">("all");
+  const [search, setSearch] = useState("");
+  const [sortOrder, setSortOrder] = useState<"newest" | "oldest">("newest");
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
@@ -50,15 +52,33 @@ export default function TransactionsPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Apply filter, search, and sorting
   useEffect(() => {
-    if (filter === "all") {
-      setFilteredTransactions(transactions);
-    } else {
-      setFilteredTransactions(
-        transactions.filter((t) => t.type === filter)
+    let result = [...transactions];
+
+    // Type filter
+    if (filter !== "all") {
+      result = result.filter((t) => t.type === filter);
+    }
+
+    // Search filter
+    if (search.trim() !== "") {
+      result = result.filter((t) =>
+        t.title.toLowerCase().includes(search.toLowerCase())
       );
     }
-  }, [filter, transactions]);
+
+    // Sorting
+    result.sort((a, b) => {
+      if (sortOrder === "newest") {
+        return new Date(b.date).getTime() - new Date(a.date).getTime();
+      } else {
+        return new Date(a.date).getTime() - new Date(b.date).getTime();
+      }
+    });
+
+    setFilteredTransactions(result);
+  }, [filter, search, sortOrder, transactions]);
 
   const handleDelete = async (id: number) => {
     const confirmed = window.confirm("Are you sure you want to delete this transaction?");
@@ -75,6 +95,12 @@ export default function TransactionsPage() {
     } else {
       fetchTransactions();
     }
+  };
+
+  const clearFilters = () => {
+    setFilter("all");
+    setSearch("");
+    setSortOrder("newest");
   };
 
   const filteredTotal = filteredTransactions.reduce((sum, t) => {
@@ -107,8 +133,19 @@ export default function TransactionsPage() {
           </Link>
         </div>
 
-        {/* Filter Buttons */}
-        <div className="flex flex-wrap gap-2 mb-4">
+        {/* Search Bar */}
+        <div className="mb-4">
+          <input
+            type="text"
+            placeholder="Search by title..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
+          />
+        </div>
+
+        {/* Filter + Sort + Clear Buttons */}
+        <div className="flex flex-wrap gap-2 mb-4 items-center">
           <button
             onClick={() => setFilter("all")}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
@@ -139,6 +176,38 @@ export default function TransactionsPage() {
           >
             Expense
           </button>
+
+          <div className="w-px bg-gray-300 mx-1 hidden sm:block"></div>
+
+          <button
+            onClick={() => setSortOrder("newest")}
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
+              sortOrder === "newest"
+                ? "bg-gray-800 text-white"
+                : "bg-white text-gray-700 hover:bg-gray-100"
+            }`}
+          >
+            Newest
+          </button>
+          <button
+            onClick={() => setSortOrder("oldest")}
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
+              sortOrder === "oldest"
+                ? "bg-gray-800 text-white"
+                : "bg-white text-gray-700 hover:bg-gray-100"
+            }`}
+          >
+            Oldest
+          </button>
+
+          {(filter !== "all" || search !== "" || sortOrder !== "newest") && (
+            <button
+              onClick={clearFilters}
+              className="px-4 py-2 rounded-lg text-sm font-medium bg-red-100 text-red-600 hover:bg-red-200 transition"
+            >
+              Clear Filters
+            </button>
+          )}
         </div>
 
         {/* Filtered Total + Count */}
@@ -161,7 +230,9 @@ export default function TransactionsPage() {
             <p className="text-4xl mb-3">📭</p>
             <h3 className="text-lg font-semibold text-gray-800 mb-1">No transactions found</h3>
             <p className="text-gray-500 mb-4">
-              {filter === "all"
+              {search
+                ? "No transactions match your search."
+                : filter === "all"
                 ? "You haven’t added any transactions yet."
                 : `No ${filter} transactions to show.`}
             </p>
