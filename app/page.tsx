@@ -65,41 +65,41 @@ export default function HomePage() {
     { name: "Expenses", amount: totalExpenses },
   ];
 
-  const colors = ["#16a34a", "#dc2626"]; // green for income, red for expenses
+  const colors = ["#16a34a", "#dc2626"];
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-200">
-        <p className="text-lg text-gray-700">Loading...</p>
+      <div className="min-h-screen flex items-center justify-center bg-slate-200 dark:bg-gray-900">
+        <p className="text-lg text-gray-700 dark:text-gray-300">Loading...</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-200">
+    <div className="min-h-screen bg-slate-200 dark:bg-gray-900">
       <Navbar />
 
       <div className="max-w-4xl mx-auto py-10 px-4">
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">Dashboard</h1>
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-8">Dashboard</h1>
 
         {/* Summary Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
-          <div className="bg-white p-6 rounded-xl shadow-md text-center">
-            <p className="text-sm text-gray-500 mb-1">Current Balance</p>
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md text-center">
+            <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">Current Balance</p>
             <p className={`text-2xl font-bold ${balance >= 0 ? "text-green-600" : "text-red-600"}`}>
               £{balance.toFixed(2)}
             </p>
           </div>
 
-          <div className="bg-white p-6 rounded-xl shadow-md text-center">
-            <p className="text-sm text-gray-500 mb-1">Total Income</p>
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md text-center">
+            <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">Total Income</p>
             <p className="text-2xl font-bold text-green-600">
               £{totalIncome.toFixed(2)}
             </p>
           </div>
 
-          <div className="bg-white p-6 rounded-xl shadow-md text-center">
-            <p className="text-sm text-gray-500 mb-1">Total Expenses</p>
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md text-center">
+            <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">Total Expenses</p>
             <p className="text-2xl font-bold text-red-600">
               £{totalExpenses.toFixed(2)}
             </p>
@@ -107,15 +107,22 @@ export default function HomePage() {
         </div>
 
         {/* Chart */}
-        <div className="bg-white p-6 rounded-xl shadow-md mb-10">
-          <h2 className="text-xl font-semibold text-gray-800 mb-4">Income vs Expenses</h2>
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md mb-10">
+          <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">Income vs Expenses</h2>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={chartData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
+                <CartesianGrid strokeDasharray="3 3" stroke="#9ca3af" />
+                <XAxis dataKey="name" stroke="#9ca3af" />
+                <YAxis stroke="#9ca3af" />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: "#1f2937",
+                    border: "none",
+                    borderRadius: "8px",
+                    color: "#fff",
+                  }}
+                />
                 <Bar dataKey="amount" radius={[4, 4, 0, 0]}>
                   {chartData.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={colors[index]} />
@@ -136,13 +143,13 @@ export default function HomePage() {
           </a>
           <a
             href="/transactions"
-            className="bg-gray-700 text-white px-6 py-3 rounded-lg hover:bg-gray-800 transition"
+            className="bg-gray-700 text-white px-6 py-3 rounded-lg hover:bg-gray-800 transition dark:bg-gray-600 dark:hover:bg-gray-500"
           >
             View All Transactions
           </a>
         </div>
 
-        <p className="text-center text-gray-600 mt-8">
+        <p className="text-center text-gray-600 dark:text-gray-400 mt-8">
           Logged in as: <span className="font-medium">{user?.email}</span>
         </p>
       </div>

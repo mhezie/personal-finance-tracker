@@ -64,7 +64,6 @@ export default function AddTransactionPage() {
       setCategory("Food");
       setDate("");
 
-      // Clear success message after 3 seconds
       setTimeout(() => {
         setMessage("");
         setMessageType("");
@@ -75,12 +74,12 @@ export default function AddTransactionPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-200">
+    <div className="min-h-screen bg-slate-200 dark:bg-gray-900">
       <Navbar />
 
       <div className="flex items-center justify-center p-4 py-10">
-        <div className="bg-white p-8 rounded-xl shadow-lg w-full max-w-md">
-          <h1 className="text-2xl font-bold mb-6 text-center text-gray-900">
+        <div className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg w-full max-w-md">
+          <h1 className="text-2xl font-bold mb-6 text-center text-gray-900 dark:text-white">
             Add Transaction
           </h1>
 
@@ -88,8 +87,8 @@ export default function AddTransactionPage() {
             <div
               className={`mb-4 p-3 rounded-lg text-center text-sm font-medium ${
                 messageType === "success"
-                  ? "bg-green-100 text-green-700"
-                  : "bg-red-100 text-red-700"
+                  ? "bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-200"
+                  : "bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-200"
               }`}
             >
               {message}
@@ -98,36 +97,36 @@ export default function AddTransactionPage() {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-semibold mb-1 text-gray-800">Title</label>
+              <label className="block text-sm font-semibold mb-1 text-gray-800 dark:text-gray-200">Title</label>
               <input
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                 placeholder="e.g. Salary, Groceries"
                 required
               />
             </div>
 
             <div>
-              <label className="block text-sm font-semibold mb-1 text-gray-800">Amount</label>
+              <label className="block text-sm font-semibold mb-1 text-gray-800 dark:text-gray-200">Amount</label>
               <input
                 type="number"
                 step="0.01"
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                 placeholder="0.00"
                 required
               />
             </div>
 
             <div>
-              <label className="block text-sm font-semibold mb-1 text-gray-800">Type</label>
+              <label className="block text-sm font-semibold mb-1 text-gray-800 dark:text-gray-200">Type</label>
               <select
                 value={type}
                 onChange={(e) => setType(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
               >
                 <option value="expense">Expense</option>
                 <option value="income">Income</option>
@@ -135,11 +134,11 @@ export default function AddTransactionPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-semibold mb-1 text-gray-800">Category</label>
+              <label className="block text-sm font-semibold mb-1 text-gray-800 dark:text-gray-200">Category</label>
               <select
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
               >
                 {categories.map((cat) => (
                   <option key={cat} value={cat}>
@@ -150,12 +149,12 @@ export default function AddTransactionPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-semibold mb-1 text-gray-800">Date</label>
+              <label className="block text-sm font-semibold mb-1 text-gray-800 dark:text-gray-200">Date</label>
               <input
                 type="date"
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                 required
               />
             </div>
