@@ -10,6 +10,7 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGri
 interface Transaction {
   amount: number;
   type: string;
+  date: string;
 }
 
 export default function HomePage() {
@@ -17,6 +18,8 @@ export default function HomePage() {
   const [loading, setLoading] = useState(true);
   const [totalIncome, setTotalIncome] = useState(0);
   const [totalExpenses, setTotalExpenses] = useState(0);
+  const [monthIncome, setMonthIncome] = useState(0);
+  const [monthExpenses, setMonthExpenses] = useState(0);
   const router = useRouter();
 
   useEffect(() => {
@@ -32,24 +35,39 @@ export default function HomePage() {
 
       const { data: transactions, error } = await supabase
         .from("transactions")
-        .select("amount, type");
+        .select("amount, type, date");
 
       if (error) {
         console.error(error);
       } else if (transactions) {
         let income = 0;
         let expenses = 0;
+        let mIncome = 0;
+        let mExpenses = 0;
+
+        const now = new Date();
+        const currentMonth = now.getMonth();
+        const currentYear = now.getFullYear();
 
         transactions.forEach((t: Transaction) => {
+          const amount = Number(t.amount);
+          const tDate = new Date(t.date);
+          const isCurrentMonth =
+            tDate.getMonth() === currentMonth && tDate.getFullYear() === currentYear;
+
           if (t.type === "income") {
-            income += Number(t.amount);
+            income += amount;
+            if (isCurrentMonth) mIncome += amount;
           } else {
-            expenses += Number(t.amount);
+            expenses += amount;
+            if (isCurrentMonth) mExpenses += amount;
           }
         });
 
         setTotalIncome(income);
         setTotalExpenses(expenses);
+        setMonthIncome(mIncome);
+        setMonthExpenses(mExpenses);
       }
 
       setLoading(false);
@@ -59,6 +77,7 @@ export default function HomePage() {
   }, [router]);
 
   const balance = totalIncome - totalExpenses;
+  const monthNet = monthIncome - monthExpenses;
 
   const chartData = [
     { name: "Income", amount: totalIncome },
@@ -82,8 +101,8 @@ export default function HomePage() {
       <div className="max-w-4xl mx-auto py-10 px-4">
         <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-8">Dashboard</h1>
 
-        {/* Summary Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
+        {/* Overall Summary Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
           <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md text-center">
             <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">Current Balance</p>
             <p className={`text-2xl font-bold ${balance >= 0 ? "text-green-600" : "text-red-600"}`}>
@@ -103,6 +122,27 @@ export default function HomePage() {
             <p className="text-2xl font-bold text-red-600">
               £{totalExpenses.toFixed(2)}
             </p>
+          </div>
+        </div>
+
+        {/* Monthly Summary */}
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md mb-10">
+          <h2 className="text-lg font-semibold text-gray-800 dark:text-white mb-4">This Month</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
+            <div>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Income</p>
+              <p className="text-xl font-bold text-green-600">£{monthIncome.toFixed(2)}</p>
+            </div>
+            <div>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Expenses</p>
+              <p className="text-xl font-bold text-red-600">£{monthExpenses.toFixed(2)}</p>
+            </div>
+            <div>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Net</p>
+              <p className={`text-xl font-bold ${monthNet >= 0 ? "text-green-600" : "text-red-600"}`}>
+                £{monthNet.toFixed(2)}
+              </p>
+            </div>
           </div>
         </div>
 

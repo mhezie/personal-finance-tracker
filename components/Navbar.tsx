@@ -10,7 +10,6 @@ export default function Navbar() {
   const pathname = usePathname();
   const [isDark, setIsDark] = useState(false);
 
-  // On first load, check what is currently set
   useEffect(() => {
     const currentlyDark = document.documentElement.classList.contains("dark");
     setIsDark(currentlyDark);
@@ -18,12 +17,10 @@ export default function Navbar() {
 
   const toggleDarkMode = () => {
     if (document.documentElement.classList.contains("dark")) {
-      // Currently dark → switch to light
       document.documentElement.classList.remove("dark");
       localStorage.setItem("darkMode", "false");
       setIsDark(false);
     } else {
-      // Currently light → switch to dark
       document.documentElement.classList.add("dark");
       localStorage.setItem("darkMode", "true");
       setIsDark(true);
@@ -31,6 +28,9 @@ export default function Navbar() {
   };
 
   const handleLogout = async () => {
+    const confirmed = window.confirm("Are you sure you want to log out?");
+    if (!confirmed) return;
+
     await supabase.auth.signOut();
     router.push("/login");
   };

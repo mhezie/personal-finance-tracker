@@ -99,6 +99,34 @@ export default function TransactionsPage() {
     setSortOrder("newest");
   };
 
+  const exportToCSV = () => {
+    if (filteredTransactions.length === 0) {
+      alert("No transactions to export");
+      return;
+    }
+
+    const headers = ["Title", "Amount", "Type", "Category", "Date"];
+    const rows = filteredTransactions.map((t) => [
+      t.title,
+      t.amount,
+      t.type,
+      t.category,
+      t.date,
+    ]);
+
+    const csvContent =
+      "data:text/csv;charset=utf-8," +
+      [headers, ...rows].map((row) => row.join(",")).join("\n");
+
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", "transactions.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   const filteredTotal = filteredTransactions.reduce((sum, t) => {
     return t.type === "income" ? sum + Number(t.amount) : sum - Number(t.amount);
   }, 0);
@@ -143,12 +171,20 @@ export default function TransactionsPage() {
               My Transactions
             </h1>
           </div>
-          <Link
-            href="/add-transaction"
-            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition text-center"
-          >
-            + Add New
-          </Link>
+          <div className="flex gap-2">
+            <button
+              onClick={exportToCSV}
+              className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition text-sm"
+            >
+              Export CSV
+            </button>
+            <Link
+              href="/add-transaction"
+              className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition text-center"
+            >
+              + Add New
+            </Link>
+          </div>
         </div>
 
         {/* Search */}
@@ -228,8 +264,8 @@ export default function TransactionsPage() {
           )}
         </div>
 
-        {/* Total Card */}
-        <div className="bg-white p-4 rounded-xl shadow mb-6 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 dark:bg-gray-800">
+        {/* Total */}
+        <div className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow mb-6 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
           <div>
             <p className="text-gray-600 font-medium dark:text-gray-300">
               {filter === "all" ? "Net Total" : filter === "income" ? "Total Income" : "Total Expenses"}
@@ -244,7 +280,7 @@ export default function TransactionsPage() {
         </div>
 
         {filteredTransactions.length === 0 ? (
-          <div className="bg-white p-8 sm:p-10 rounded-xl shadow text-center dark:bg-gray-800">
+          <div className="bg-white dark:bg-gray-800 p-8 sm:p-10 rounded-xl shadow text-center">
             <p className="text-4xl mb-3">📭</p>
             <h3 className="text-lg font-semibold text-gray-800 mb-1 dark:text-white">No transactions found</h3>
             <p className="text-gray-500 mb-4 dark:text-gray-400">
@@ -266,7 +302,7 @@ export default function TransactionsPage() {
             {filteredTransactions.map((transaction) => (
               <div
                 key={transaction.id}
-                className="bg-white p-4 sm:p-5 rounded-xl shadow flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 dark:bg-gray-800"
+                className="bg-white dark:bg-gray-800 p-4 sm:p-5 rounded-xl shadow flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3"
               >
                 <div>
                   <h3 className="font-semibold text-lg text-gray-900 dark:text-white">
